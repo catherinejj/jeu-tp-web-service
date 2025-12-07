@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="fr">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Login - Grid Battle</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <header class="page-header">
+      <h1>Jeu de stratégie WebSocket</h1>
+      <p class="hint">Connecte-toi pour pouvoir rejoindre une partie.</p>
+    </header>
+
+    <main class="login-layout">
+      <section class="card login-card">
+        <h2>Connexion joueur</h2>
+
+        <form id="loginForm">
+          <div class="form-group">
+            <label for="username">Pseudo</label>
+            <input id="username" type="text" required />
+          </div>
+
+          <div class="form-group">
+            <label for="password">Mot de passe</label>
+            <input id="password" type="password" required />
+          </div>
+
+          <button type="submit">Se connecter</button>
+        </form>
+
+        <div id="message" class="message" style="display: none"></div>
+
+        <div id="welcome" class="game-link" style="display: none">
+          <p id="welcomeText"></p>
+          <a href="/index.html">Lancer une nouvelle partie</a>
+        </div>
+      </section>
+    </main>
+
+    <script>
+      const form = document.getElementById("loginForm");
+      const messageDiv = document.getElementById("message");
+      const welcomeDiv = document.getElementById("welcome");
+      const welcomeText = document.getElementById("welcomeText");
+
+      form.addEventListener("submit", async (e) => {
+        e.preventDefault();
+
+        messageDiv.style.display = "none";
+        welcomeDiv.style.display = "none";
+
+        const username = document.getElementById("username").value.trim();
+        const password = document.getElementById("password").value.trim();
+
+        try {
+          const response = await fetch("/api/auth/login", {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify({ username, password }),
+          });
+
+          const data = await response.json();
+
+          if (!response.ok) {
+            messageDiv.textContent = data.error || "Login failed";
+            messageDiv.className = "message error";
+            messageDiv.style.display = "block";
+            return;
+          }
+
+          const displayName =
+            data.user && data.user.username ? data.user.username : username;
+
+          localStorage.setItem("jwt_token", data.token);
+          localStorage.setItem("player_username", displayName);
+
+          messageDiv.textContent = "Connexion réussie !";
+          messageDiv.className = "message success";
+          messageDiv.style.display = "block";
+
+          welcomeText.textContent = `Bienvenue, ${displayName} ! Tu peux maintenant rejoindre une partie.`;
+          welcomeDiv.style.display = "block";
+
+        } catch (err) {
+          console.error(err);
+          messageDiv.textContent = "Erreur réseau. Réessaie plus tard.";
+          messageDiv.className = "message error";
+          messageDiv.style.display = "block";
+        }
+      });
+    </script>
+  </body>
+</html>

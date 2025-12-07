@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="fr">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Jeu de stratégie WebSocket</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" />
+  <link rel="stylesheet" href="styles.css" />
+</head>
+
+<body>
+  <header class="page-header">
+    <h1>Jeu de stratégie WebSocket</h1>
+  </header>
+  <main class="layout">
+    <section class="sidebar sidebar-left">
+      <form id="join-form" class="card">
+        <h2>Rejoindre la partie</h2>
+        <label>
+          Pseudo
+          <input type="text" id="pseudo" name="pseudo" maxlength="16" required />
+        </label>
+        <label>
+          Couleur
+          <input type="color" id="color" name="color" value="#ff4f4f" class="color-input" />
+        </label>
+
+        <label>
+          Taille de grille
+          <select id="grid-size" name="grid-size">
+            <option value="9">9 x 9</option>
+            <!-- <option value="12">12 x 12</option> -->
+          </select>
+        </label>
+        <button type="submit">Rejoindre</button>
+        <p class="hint">Le premier joueur peut choisir la taille (9 uniquement pour le moment).</p>
+      </form>
+
+      <section class="card">
+        <h2>Joueurs</h2>
+        <div id="players-list" class="players"></div>
+      </section>
+
+    </section>
+
+    <section class="board-area">
+      <div class="board card">
+        <h2>Plateau</h2>
+        <div id="grid" class="grid" role="grid" aria-label="Grille de jeu"></div>
+
+    </section>
+    </div>
+
+
+
+    <section class="sidebar sidebar-right">
+      <section class="card actions-card">
+        <h2>Actions</h2>
+        <div class="actions" id="action-buttons">
+          <button type="button" data-action="MOVE">Se déplacer</button>
+          <button type="button" data-action="ATTACK">Attaquer</button>
+          <button type="button" data-action="PLACE_OBSTACLE">Bouclier</button>
+        </div>
+        <p class="hint">
+          Sélectionne une action puis clique une case sur la grille. Les actions ne sont possibles que si c’est ton
+          tour.
+        </p>
+      </section>
+      <section class="card status">
+        <h2>État de la partie</h2>
+        <p id="game-status">En attente de connexion...</p>
+        <p id="turn-status"></p>
+        <p id="winner-status"></p>
+      </section>
+
+      <section class="card log">
+        <h2>Messages</h2>
+        <div id="log"></div>
+      </section>
+    </section>
+  </main>
+
+  <div id="victory-modal" class="victory-modal" role="dialog" aria-modal="true" aria-live="assertive">
+    <div class="modal-backdrop"></div>
+    <div class="modal-content">
+      <span class="victory-icon" aria-hidden="true">🏆</span>
+      <h2 id="victory-title"></h2>
+      <p id="victory-message"></p>
+      <button id="reset-game-btn" type="button">Nouvelle partie</button>
+    </div>
+  </div>
+
+  <script src="app.js"></script>
+
+</body>
+
+</html>
